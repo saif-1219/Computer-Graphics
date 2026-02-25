@@ -3,66 +3,35 @@
 var vertexShaderSrc = `#version 300 es
 
 in vec4 a_position;
-
-uniform vec2 u_resolution;
+in vec4 a_color;
+out vec4 v_color;
 
 void main(){
-    // Convert from pixel space to clip space using the canvas resolution
-    vec2 zeroToOne = a_position.xy / u_resolution;
-    vec2 zeroToTwo = zeroToOne * 2.0;
-    vec2 clipSpace = zeroToTwo - 1.0;
+
+    vec4 zeroToFour = a_position + vec4(2.0, 2.0, 0.0, 0.0);
+    vec4 zeroToTwo = zeroToFour / vec4(2.0, 2.0, 1.0, 1.0);
+    vec4 clipSpace = zeroToTwo - vec4(1.0, 1.0, 0.0, 0.0);
+    
     gl_Position = vec4(clipSpace.x, -clipSpace.y, 0.0, 1.0);
+    gl_PointSize = 1.0;
+
+    v_color = a_color;
 }
-`
+`;
+
 var fragmentShaderSrc = `#version 300 es
 
 precision highp float;
 
+in vec4 v_color;
 out vec4 outColor;
 
 void main(){
-    outColor = vec4(1.0, 0.0, 0.0, 1.0);
+    outColor = v_color;
 }
 
-`
+`;
 
-function createDivisions(positions, radius, divisions, counter=1) {
-    //creating circle points between each two points in the positions array and changing the positions array in place to include those points
-    if (counter >= divisions) {
-        return positions;
-    }
-
-    var new_positions = [];
-    // let i  = ((2**(counter-1)) * 16)-16;
-    for (let i = ((2**(counter-1)) * 16)-16; i < positions.length - 2; i += 4) {
-        let x1 = positions[i];
-        let y1 = positions[i + 1];
-        let x2 = positions[i + 2];
-        let y2 = positions[i + 3];
-        let mid_x = (x1 + x2) / 2;
-        let mid_y = (y1 + y2) / 2;
-
-        let mid_x_trans = (((counter-1) * radius * 2) + radius) - mid_x;
-        let mid_y_trans = radius - mid_y;
-
-        let mid = vec2(mid_x_trans, mid_y_trans);
-        let norm_mid = normalizeVector(mid);
-        console.log("counter: ", counter, "norm_mid:", norm_mid);
-
-        norm_mid[0] *= radius;
-        norm_mid[1] *= radius;
-
-        let new_x = (((counter-1) * radius * 2) + radius) - norm_mid[0];
-        let new_y = radius - norm_mid[1];
-
-        new_positions.push(x1 +  radius * 2, y1, new_x +  radius * 2, new_y , new_x +  radius * 2, new_y, x2 +  radius * 2, y2);
-    }
-    for (let i = 0; i < new_positions.length; i++) {
-        positions.push(new_positions[i]);
-    }
-    console.log("positions:", positions);
-    return createDivisions(positions, radius, divisions, counter + 1);
-}
 function createShader(gl, type, src){
     var shader = gl.createShader(type);
     gl.shaderSource(shader, src);
@@ -101,47 +70,52 @@ function main(){
         return;
     }
 
-    var radius = parseFloat(prompt("Enter the radius of the circle:", "50"));
-    var divisions = parseInt(prompt("Enter the number of divisions (more divisions = smoother circle):", "5"));
-
     var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSrc);
     var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSrc);
 
     var program = createProgram(gl, vertexShader, fragmentShader);
 
     var positionAtribLocation = gl.getAttribLocation(program, "a_position");
+    var colorAtribLocation = gl.getAttribLocation(program, "a_color");
 
     var positionBuffer = gl.createBuffer();
+    var colorBuffer = gl.createBuffer();
 
     
-    var width = radius * 2 * divisions;;
-    var height = radius * 2;
-
-    
+    var width = 600;
+    var height = 600;
     
     document.getElementById("c").width = width;
     document.getElementById("c").height = height;
 
-    var unit = radius;    
+    let positions = [];
+    let colors = [];
 
+    for (let x = 0; x < width; x+=1){
+        for (let y = 0; y < height; y+=1){
+            let complex_x = map_point(0, width, -2, 2, x);
+            let complex_y = map_point(0, height, -2, 2, y);
+            positions.push(complex_x, complex_y);
+            // colors.push(1, 0, 0, 1);
 
-    var positions = [
-        0, unit,
-        unit, 0,
+            let zx = 0;
+            let zy = 0;
+            let iteration = 0;
+            const max_iteration = 500;
+            while (Math.sqrt(zx * zx + zy * zy) < 2  && iteration < max_iteration) {
+                let temp = zx * zx - zy * zy + complex_x;
+                zy = 2 * zx * zy + complex_y;
+                zx = temp;
+                iteration++;
+            }
+            if (iteration === max_iteration) {
+                colors.push(0.8, 0, 0.6, 1); 
+            } else {
+                colors.push(Math.sin(iteration/10), 0, 0, 1);
+            }
+        }
+    }
 
-        unit, 0,
-        unit * 2, unit,
-        
-        unit * 2, unit,
-        unit, unit * 2,
-        
-        unit, unit * 2,
-        0, unit
-    ];
-
-    positions = createDivisions(positions, radius, divisions);
-    console.log(positions.length);
-    
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -157,14 +131,16 @@ function main(){
     var offset = 0;   
     gl.vertexAttribPointer(positionAtribLocation, size, type, normalize, stride, offset);
 
-    // resizeCanvasToDisplaySize(gl.canvas);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(colorAtribLocation);
+    gl.vertexAttribPointer(colorAtribLocation, 4, gl.FLOAT, false, 0, 0);
+
+    resizeCanvasToDisplaySize(gl.canvas);
 
     gl.useProgram(program);
     gl.bindVertexArray(vao);
-
-    // Send canvas width/height to the shader as a uniform
-    var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -172,7 +148,7 @@ function main(){
     gl.clear(gl.COLOR_BUFFER_BIT);
 
 
-    var primitiveType = gl.LINES;
+    var primitiveType = gl.POINTS; 
     var offset = 0;
     var count = positions.length / 2;
     gl.drawArrays(primitiveType, offset, count);

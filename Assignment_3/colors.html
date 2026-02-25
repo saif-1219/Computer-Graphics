@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>COLORS</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="colors.js" defer></script>
+    </head>
+    <body>
+        <div>
+            Fill Type:
+            <select id="Fill_Type">
+                <option value="solid">Solid Colored</option>
+                <option value="boundry">Show Boundry</option>
+            </select>
+        </div>
+        <div>
+            Shading Type:
+            <select id="Shading_Type">
+                <option value="flat">Flat Shading</option>
+                <option value="interpolated">Interpolated Shading</option>
+            </select>
+        </div>
+        <div>
+            Vertex Colors:
+        </div>
+        <div>
+            Vertex 1: <input type="color" id="v1" value="#ff0000">
+        </div>
+        <div>
+            Vertex 2: <input type="color" id="v2" value="#00ff00">
+        </div>
+        <div>
+            Vertex 3: <input type="color" id="v3" value="#0000ff">
+        </div>
+        <canvas id="c"></canvas>
+
+    </body>
+</html>
