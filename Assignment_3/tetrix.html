@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TETRIX</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="mat4.js"></script>
+        <script src="tetrix.js" defer></script>
+    </head>
+    <body>
+        <h1>Tetrix</h1>
+        <div>
+            Reset Position: <button id="reset">Reset</button>
+        </div>
+        <div>
+            Recursion Level (min 0, max 5): <input type="range" id="recursion" min="0" max="5" value="0">
+        </div>
+        <div>
+            Rotation_x: <input type="range" id="rotation_x" min="0" max="360" value="0">
+        </div>
+        <div>
+            Rotation_y: <input type="range" id="rotation_y" min="0" max="360" value="0">
+        </div>
+        <div>
+            Rotation_z: <input type="range" id="rotation_z" min="0" max="360" value="0">
+        </div>
+        <canvas id="c"></canvas>
+
+    </body>
+</html>

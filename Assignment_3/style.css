@@ -3,13 +3,13 @@ canvas {
     /* width: 80vw;
     height: 80vh; */
     margin: 0;
-    padding: 0;
+    padding: 0px; /* added padding around canvas */
     border: black solid 1px;
 }
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 20px;
     overflow: hidden;
 }
 
