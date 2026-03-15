@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MESH LOADING</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="mat4.js"></script>
+        <script src="mesh.js" defer></script>
+    </head>
+    <body>
+        
+        
+        
+        <div id="controls">
+            <h1>Mesh Loading</h1>
+            <div>Choose a ply file for it to get displayed.</div>
+            <input type="file" id="fileInput">
+            <h2>Transformation Controls</h2>
+            <div class="control-section">
+                <h3>(a) Rotation around axes</h3>
+                <p><strong>Q</strong> - X-axis counter-clockwise | <strong>W</strong> - X-axis clockwise</p>
+                <p><strong>A</strong> - Y-axis counter-clockwise | <strong>S</strong> - Y-axis clockwise</p>
+                <p><strong>Z</strong> - Z-axis counter-clockwise | <strong>X</strong> - Z-axis clockwise</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>(b) Translation (shift)</h3>
+                <p><strong>← / →</strong> - Move left/right (X-axis)</p>
+                <p><strong>↑ / ↓</strong> - Move up/down (Y-axis)</p>
+                <p><strong>O</strong> - Move forward (Z+) | <strong>P</strong> - Move backward (Z-)</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>(c) Scaling (shrink/grow)</h3>
+                <p><strong>E</strong> - Grow X | <strong>R</strong> - Shrink X</p>
+                <p><strong>D</strong> - Grow Y | <strong>F</strong> - Shrink Y</p>
+                <p><strong>C</strong> - Grow Z | <strong>V</strong> - Shrink Z</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>(d) Reflection about axes</h3>
+                <p><strong>1</strong> - Toggle X reflection | <strong>2</strong> - Toggle Y reflection | <strong>3</strong> - Toggle Z reflection</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>(e) Shear transformation</h3>
+                <p><strong>,</strong> / <strong>.</strong> - XY Shear (negative/positive)</p>
+                <p><strong>/</strong> / <strong>[</strong> - XZ Shear (negative/positive)</p>
+                <p><strong>L</strong> / <strong>;</strong> - YZ Shear (negative/positive)</p>
+            </div>
+            
+            <div class="control-section">
+                <h3>(f) Reset</h3>
+                <p><strong>M</strong> - Reset all transformations</p>
+            </div>
+        </div>
+        
+        <canvas id="c"></canvas>
+
+
+    </body>
+</html>
+
+
+<!-- Used AI for the dispaly of these controls -->

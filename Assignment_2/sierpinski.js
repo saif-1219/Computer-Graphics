@@ -149,7 +149,7 @@ function main(){
         width/2+150, height/2+150,
     ];
 
-    var [positions, invPositions] = sierpinski(mainTriangle, 5);
+    var [positions, invPositions] = sierpinski(mainTriangle, 8);
     // combine both sets so the flag (third value) is used per-vertex to decide color
     var allPositions = positions.concat(invPositions);
     

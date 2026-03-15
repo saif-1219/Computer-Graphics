@@ -1,0 +1,4 @@
+1) To run question 1, choose the .ply file using the file browser on the top
+2) To run question 2, run it using either python or node server while the assignment folder is the current directory. Then open solids.html in a web browser.
+
+AI use: I used AI to generate and beautify the controls section in solids.html and mesh.html. 
